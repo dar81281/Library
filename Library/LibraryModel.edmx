@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="LibraryInformationModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Authors">
+          <Key>
+            <PropertyRef Name="AuthorID" />
+          </Key>
+          <Property Name="AuthorID" Type="int" Nullable="false" />
+          <Property Name="Bio" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Books">
+          <Key>
+            <PropertyRef Name="BookID" />
+          </Key>
+          <Property Name="BookID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ISBN" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="AuthorID" Type="int" Nullable="false" />
+          <Property Name="NumPages" Type="int" />
+          <Property Name="Subject" Type="varchar" MaxLength="255" />
+          <Property Name="Description" Type="varchar" MaxLength="255" />
+          <Property Name="Publisher" Type="varchar" MaxLength="50" />
+          <Property Name="YearPublished" Type="char" MaxLength="4" />
+          <Property Name="Language" Type="varchar" MaxLength="255" />
+          <Property Name="NumberOfCopies" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Cardholders">
+          <Key>
+            <PropertyRef Name="CardHolderID" />
+          </Key>
+          <Property Name="CardHolderID" Type="int" Nullable="false" />
+          <Property Name="Phone" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="LibraryCardID" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CheckOutLog">
+          <Key>
+            <PropertyRef Name="CheckOutLogID" />
+          </Key>
+          <Property Name="CheckOutLogID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CardholderID" Type="int" Nullable="false" />
+          <Property Name="BookID" Type="int" Nullable="false" />
+          <Property Name="CheckOutDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Librarians">
+          <Key>
+            <PropertyRef Name="LibrariansID" />
+          </Key>
+          <Property Name="LibrariansID" Type="int" Nullable="false" />
+          <Property Name="Phone" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="UserID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="People">
+          <Key>
+            <PropertyRef Name="PersonID" />
+          </Key>
+          <Property Name="PersonID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Authors_People">
+          <End Role="People" Type="Self.People" Multiplicity="1" />
+          <End Role="Authors" Type="Self.Authors" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="People">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Authors">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Books_Authors">
+          <End Role="Authors" Type="Self.Authors" Multiplicity="1" />
+          <End Role="Books" Type="Self.Books" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Authors">
+              <PropertyRef Name="AuthorID" />
+            </Principal>
+            <Dependent Role="Books">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cardholders_People">
+          <End Role="People" Type="Self.People" Multiplicity="1" />
+          <End Role="Cardholders" Type="Self.Cardholders" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="People">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Cardholders">
+              <PropertyRef Name="CardHolderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CheckOutLog_Books">
+          <End Role="Books" Type="Self.Books" Multiplicity="1" />
+          <End Role="CheckOutLog" Type="Self.CheckOutLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Books">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="CheckOutLog">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CheckOutLog_Cardholders">
+          <End Role="Cardholders" Type="Self.Cardholders" Multiplicity="1" />
+          <End Role="CheckOutLog" Type="Self.CheckOutLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cardholders">
+              <PropertyRef Name="CardHolderID" />
+            </Principal>
+            <Dependent Role="CheckOutLog">
+              <PropertyRef Name="CardholderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Librarians_People">
+          <End Role="People" Type="Self.People" Multiplicity="1" />
+          <End Role="Librarians" Type="Self.Librarians" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="People">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Librarians">
+              <PropertyRef Name="LibrariansID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibraryInformationModelStoreContainer">
+          <EntitySet Name="Authors" EntityType="Self.Authors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Books" EntityType="Self.Books" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cardholders" EntityType="Self.Cardholders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CheckOutLog" EntityType="Self.CheckOutLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Librarians" EntityType="Self.Librarians" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="People" EntityType="Self.People" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Authors_People" Association="Self.FK_Authors_People">
+            <End Role="People" EntitySet="People" />
+            <End Role="Authors" EntitySet="Authors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Books_Authors" Association="Self.FK_Books_Authors">
+            <End Role="Authors" EntitySet="Authors" />
+            <End Role="Books" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cardholders_People" Association="Self.FK_Cardholders_People">
+            <End Role="People" EntitySet="People" />
+            <End Role="Cardholders" EntitySet="Cardholders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CheckOutLog_Books" Association="Self.FK_CheckOutLog_Books">
+            <End Role="Books" EntitySet="Books" />
+            <End Role="CheckOutLog" EntitySet="CheckOutLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CheckOutLog_Cardholders" Association="Self.FK_CheckOutLog_Cardholders">
+            <End Role="Cardholders" EntitySet="Cardholders" />
+            <End Role="CheckOutLog" EntitySet="CheckOutLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Librarians_People" Association="Self.FK_Librarians_People">
+            <End Role="People" EntitySet="People" />
+            <End Role="Librarians" EntitySet="Librarians" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LibraryInformationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="LibraryInformationEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Authors" EntityType="LibraryInformationModel.Author" />
+          <EntitySet Name="Books" EntityType="LibraryInformationModel.Book" />
+          <EntitySet Name="Cardholders" EntityType="LibraryInformationModel.Cardholder" />
+          <EntitySet Name="CheckOutLogs" EntityType="LibraryInformationModel.CheckOutLog" />
+          <EntitySet Name="Librarians" EntityType="LibraryInformationModel.Librarian" />
+          <EntitySet Name="People" EntityType="LibraryInformationModel.Person" />
+          <AssociationSet Name="FK_Authors_People" Association="LibraryInformationModel.FK_Authors_People">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Author" EntitySet="Authors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Books_Authors" Association="LibraryInformationModel.FK_Books_Authors">
+            <End Role="Author" EntitySet="Authors" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CheckOutLog_Books" Association="LibraryInformationModel.FK_CheckOutLog_Books">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="CheckOutLog" EntitySet="CheckOutLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cardholders_People" Association="LibraryInformationModel.FK_Cardholders_People">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Cardholder" EntitySet="Cardholders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CheckOutLog_Cardholders" Association="LibraryInformationModel.FK_CheckOutLog_Cardholders">
+            <End Role="Cardholder" EntitySet="Cardholders" />
+            <End Role="CheckOutLog" EntitySet="CheckOutLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Librarians_People" Association="LibraryInformationModel.FK_Librarians_People">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Librarian" EntitySet="Librarians" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="AuthorID" />
+          </Key>
+          <Property Name="AuthorID" Type="Int32" Nullable="false" />
+          <Property Name="Bio" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Person" Relationship="LibraryInformationModel.FK_Authors_People" FromRole="Author" ToRole="Person" />
+          <NavigationProperty Name="Books" Relationship="LibraryInformationModel.FK_Books_Authors" FromRole="Author" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="BookID" />
+          </Key>
+          <Property Name="BookID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ISBN" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AuthorID" Type="Int32" Nullable="false" />
+          <Property Name="NumPages" Type="Int32" />
+          <Property Name="Subject" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Publisher" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="YearPublished" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="Language" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="NumberOfCopies" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Author" Relationship="LibraryInformationModel.FK_Books_Authors" FromRole="Book" ToRole="Author" />
+          <NavigationProperty Name="CheckOutLogs" Relationship="LibraryInformationModel.FK_CheckOutLog_Books" FromRole="Book" ToRole="CheckOutLog" />
+        </EntityType>
+        <EntityType Name="Cardholder">
+          <Key>
+            <PropertyRef Name="CardHolderID" />
+          </Key>
+          <Property Name="CardHolderID" Type="Int32" Nullable="false" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LibraryCardID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Person" Relationship="LibraryInformationModel.FK_Cardholders_People" FromRole="Cardholder" ToRole="Person" />
+          <NavigationProperty Name="CheckOutLogs" Relationship="LibraryInformationModel.FK_CheckOutLog_Cardholders" FromRole="Cardholder" ToRole="CheckOutLog" />
+        </EntityType>
+        <EntityType Name="CheckOutLog">
+          <Key>
+            <PropertyRef Name="CheckOutLogID" />
+          </Key>
+          <Property Name="CheckOutLogID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CardholderID" Type="Int32" Nullable="false" />
+          <Property Name="BookID" Type="Int32" Nullable="false" />
+          <Property Name="CheckOutDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Book" Relationship="LibraryInformationModel.FK_CheckOutLog_Books" FromRole="CheckOutLog" ToRole="Book" />
+          <NavigationProperty Name="Cardholder" Relationship="LibraryInformationModel.FK_CheckOutLog_Cardholders" FromRole="CheckOutLog" ToRole="Cardholder" />
+        </EntityType>
+        <EntityType Name="Librarian">
+          <Key>
+            <PropertyRef Name="LibrariansID" />
+          </Key>
+          <Property Name="LibrariansID" Type="Int32" Nullable="false" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Person" Relationship="LibraryInformationModel.FK_Librarians_People" FromRole="Librarian" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="PersonID" />
+          </Key>
+          <Property Name="PersonID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Author" Relationship="LibraryInformationModel.FK_Authors_People" FromRole="Person" ToRole="Author" />
+          <NavigationProperty Name="Cardholder" Relationship="LibraryInformationModel.FK_Cardholders_People" FromRole="Person" ToRole="Cardholder" />
+          <NavigationProperty Name="Librarian" Relationship="LibraryInformationModel.FK_Librarians_People" FromRole="Person" ToRole="Librarian" />
+        </EntityType>
+        <Association Name="FK_Authors_People">
+          <End Type="LibraryInformationModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="LibraryInformationModel.Author" Role="Author" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Author">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Books_Authors">
+          <End Type="LibraryInformationModel.Author" Role="Author" Multiplicity="1" />
+          <End Type="LibraryInformationModel.Book" Role="Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="AuthorID" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CheckOutLog_Books">
+          <End Type="LibraryInformationModel.Book" Role="Book" Multiplicity="1" />
+          <End Type="LibraryInformationModel.CheckOutLog" Role="CheckOutLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="BookID" />
+            </Principal>
+            <Dependent Role="CheckOutLog">
+              <PropertyRef Name="BookID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cardholders_People">
+          <End Type="LibraryInformationModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="LibraryInformationModel.Cardholder" Role="Cardholder" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Cardholder">
+              <PropertyRef Name="CardHolderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CheckOutLog_Cardholders">
+          <End Type="LibraryInformationModel.Cardholder" Role="Cardholder" Multiplicity="1" />
+          <End Type="LibraryInformationModel.CheckOutLog" Role="CheckOutLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cardholder">
+              <PropertyRef Name="CardHolderID" />
+            </Principal>
+            <Dependent Role="CheckOutLog">
+              <PropertyRef Name="CardholderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Librarians_People">
+          <End Type="LibraryInformationModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="LibraryInformationModel.Librarian" Role="Librarian" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="PersonID" />
+            </Principal>
+            <Dependent Role="Librarian">
+              <PropertyRef Name="LibrariansID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LibraryInformationModelStoreContainer" CdmEntityContainer="LibraryInformationEntities">
+          <EntitySetMapping Name="Authors">
+            <EntityTypeMapping TypeName="LibraryInformationModel.Author">
+              <MappingFragment StoreEntitySet="Authors">
+                <ScalarProperty Name="Bio" ColumnName="Bio" />
+                <ScalarProperty Name="AuthorID" ColumnName="AuthorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Books">
+            <EntityTypeMapping TypeName="LibraryInformationModel.Book">
+              <MappingFragment StoreEntitySet="Books">
+                <ScalarProperty Name="NumberOfCopies" ColumnName="NumberOfCopies" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+                <ScalarProperty Name="YearPublished" ColumnName="YearPublished" />
+                <ScalarProperty Name="Publisher" ColumnName="Publisher" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="NumPages" ColumnName="NumPages" />
+                <ScalarProperty Name="AuthorID" ColumnName="AuthorID" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cardholders">
+            <EntityTypeMapping TypeName="LibraryInformationModel.Cardholder">
+              <MappingFragment StoreEntitySet="Cardholders">
+                <ScalarProperty Name="LibraryCardID" ColumnName="LibraryCardID" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="CardHolderID" ColumnName="CardHolderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CheckOutLogs">
+            <EntityTypeMapping TypeName="LibraryInformationModel.CheckOutLog">
+              <MappingFragment StoreEntitySet="CheckOutLog">
+                <ScalarProperty Name="CheckOutDate" ColumnName="CheckOutDate" />
+                <ScalarProperty Name="BookID" ColumnName="BookID" />
+                <ScalarProperty Name="CardholderID" ColumnName="CardholderID" />
+                <ScalarProperty Name="CheckOutLogID" ColumnName="CheckOutLogID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Librarians">
+            <EntityTypeMapping TypeName="LibraryInformationModel.Librarian">
+              <MappingFragment StoreEntitySet="Librarians">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LibrariansID" ColumnName="LibrariansID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="People">
+            <EntityTypeMapping TypeName="LibraryInformationModel.Person">
+              <MappingFragment StoreEntitySet="People">
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="PersonID" ColumnName="PersonID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

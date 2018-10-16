@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="86b9d06e72c64dd691261375d4d1413c" Name="Diagram1">
+        <EntityTypeShape EntityType="LibraryInformationModel.Author" Width="1.5" PointX="3.25" PointY="0.5" />
+        <EntityTypeShape EntityType="LibraryInformationModel.Book" Width="1.5" PointX="5.5" PointY="0.5" />
+        <EntityTypeShape EntityType="LibraryInformationModel.Cardholder" Width="1.5" PointX="5.125" PointY="4.75" />
+        <EntityTypeShape EntityType="LibraryInformationModel.CheckOutLog" Width="1.5" PointX="7.75" PointY="3.125" />
+        <EntityTypeShape EntityType="LibraryInformationModel.Librarian" Width="1.5" PointX="0.5" PointY="4.375" />
+        <EntityTypeShape EntityType="LibraryInformationModel.Person" Width="1.5" PointX="0.75" PointY="0.5" />
+        <AssociationConnector Association="LibraryInformationModel.FK_Authors_People" />
+        <AssociationConnector Association="LibraryInformationModel.FK_Books_Authors" />
+        <AssociationConnector Association="LibraryInformationModel.FK_CheckOutLog_Books" />
+        <AssociationConnector Association="LibraryInformationModel.FK_Cardholders_People" />
+        <AssociationConnector Association="LibraryInformationModel.FK_CheckOutLog_Cardholders" />
+        <AssociationConnector Association="LibraryInformationModel.FK_Librarians_People" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
