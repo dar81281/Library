@@ -10,8 +10,11 @@ namespace Library
     {
         private static void Main(string[] args)
         {
+            //variables main will use
             int mainChoice;
             int librarianChoice;
+
+            //do while loop to display the main menu
             do
             {
                 //display the main menu to allow a user to input an option
@@ -27,61 +30,67 @@ namespace Library
                         //Find feature
                         Console.WriteLine("Implement option 1");
                         FindMenu();
-                            break;
+                            break; //case 1 break
                     case 2:
                         //Librarian login feature
-                        do
+                        bool login = Login();
+
+                        if (login)
                         {
-                            //display the librarian menu to allow a user to input an option
-                            librarianChoice = LibrarianMenu();
-
-                            //clear the console
-                            Console.Clear();
-
-                            switch (librarianChoice)
+                            //do while to display the librarian menu
+                            do
                             {
-                                case 1:
-                                    Console.WriteLine("Implement option 1");
-                                    FindMenu();
-                                    break;
-                                case 2:
-                                    Console.WriteLine("Implement option 2");
-                                    break;
-                                case 3:
-                                    Console.WriteLine("Implement option 3");
-                                    break;
-                                case 4:
-                                    Console.WriteLine("Implement option 4");
-                                    break;
-                                case 5:
-                                    Console.WriteLine("Implement option 5");
-                                    break;
-                                case 6:
-                                    Console.WriteLine("Implement option 6");
-                                    break;
-                                case 7:
-                                    Console.WriteLine("Implement option 7");
-                                    break;
-                                case 8:
-                                    //logoff
-                                    break;
-                                default:
-                                    //Display error
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Invalid option, please try again.");
-                                    break;
-                            }
-                        } while (librarianChoice != 8);
+                                //display the librarian menu to allow a user to input an option
+                                librarianChoice = LibrarianMenu();
 
-                            break;
+                                //clear the console
+                                Console.Clear();
+
+                                //inner switch to decide which option a librarian has chosen
+                                switch (librarianChoice)
+                                {
+                                    case 1:
+                                        Console.WriteLine("Implement option 1");
+                                        FindMenu();
+                                        break; //case 1 break
+                                    case 2:
+                                        Console.WriteLine("Implement option 2");
+                                        break; //case 2 break
+                                    case 3:
+                                        Console.WriteLine("Implement option 3");
+                                        break; //case 3 break
+                                    case 4:
+                                        Console.WriteLine("Implement option 4");
+                                        break; //case 4 break
+                                    case 5:
+                                        Console.WriteLine("Implement option 5");
+                                        break; //case 5 break
+                                    case 6:
+                                        Console.WriteLine("Implement option 6");
+                                        break; //case 6 break
+                                    case 7:
+                                        Console.WriteLine("Implement option 7");
+                                        break; //case 7 break
+                                    case 8:
+                                        //logoff
+                                        break; //case 8 break
+                                    default:
+                                        //Display error
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Invalid option, please try again.");
+                                        break; //default break
+                                }
+                            } while (librarianChoice != 8);
+                        }
+                            break; //case 2 break
                     case 3:
                         //Close the program
-                            break;
+                            break; //case 3 break
                     default:
                         //Display error
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Invalid option, please try again.");
-                            break;
+                            break; // default break
                 }
             } while (mainChoice != 3);
         }
@@ -139,6 +148,28 @@ namespace Library
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
+        }
+
+        //maybe want to create login class so I can return object with username and loginStatus?
+        private static bool Login()
+        {
+            //assume login fails
+            bool successfulLogin = false;
+
+            //Get username and password from librarian
+            Console.Write("Enter username: ");
+            string username = Console.ReadLine();
+            Console.Write("Enter password: ");
+            string password = Console.ReadLine();
+            Console.Clear();
+
+            //Check sql for login
+            //if (username == && password ==)
+            //{
+                successfulLogin = true;
+            //}
+
+            return successfulLogin;
         }
     }
 }
