@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Library
 {
@@ -10,6 +11,12 @@ namespace Library
     {
         private static void Main(string[] args)
         {
+            ////connect to database context
+            //var context = new LibraryInformationEntities();
+            //var data = from e in context.Authors
+            //           select e;
+            //data.ToList();
+
             //variables main will use
             int mainChoice;
             int librarianChoice;
