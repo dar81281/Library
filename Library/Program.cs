@@ -11,11 +11,11 @@ namespace Library
     {
         private static void Main(string[] args)
         {
-            ////connect to database context
-            //var context = new LibraryInformationEntities();
-            //var data = from e in context.Authors
-            //           select e;
-            //data.ToList();
+            //connect to database context
+            var context = new LibraryInformationEntities();
+            var data = (from e in context.Authors
+                       select e).ToList();
+            
 
             //variables main will use
             int mainChoice;
