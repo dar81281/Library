@@ -13,9 +13,8 @@ namespace Library
         {
             //connect to database context
             var context = new LibraryInformationEntities();
-            var data = (from e in context.Authors
-                       select e).ToList();
-            
+            //var data = (from e in context.Authors
+            //           select e).ToList();           
 
             //variables main will use
             int mainChoice;
@@ -40,7 +39,7 @@ namespace Library
                             break; //case 1 break
                     case 2:
                         //Librarian login feature
-                        bool login = Login();
+                        bool login = Login(context);
 
                         if (login)
                         {
@@ -88,6 +87,12 @@ namespace Library
                                         break; //default break
                                 }
                             } while (librarianChoice != 8);
+                        }
+                        else
+                        {
+                            //Login failed output message to user
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Login Failed");
                         }
                             break; //case 2 break
                     case 3:
@@ -158,7 +163,7 @@ namespace Library
         }
 
         //maybe want to create login class so I can return object with username and loginStatus?
-        private static bool Login()
+        private static bool Login(LibraryInformationEntities context)
         {
             //assume login fails
             bool successfulLogin = false;
@@ -170,12 +175,23 @@ namespace Library
             string password = Console.ReadLine();
             Console.Clear();
 
-            //Check sql for login
-            //if (username == && password ==)
-            //{
-                successfulLogin = true;
-            //}
+            //Query SQL for login information
+            var data = (from e in context.Librarians
+                        where e.UserID == username
+                        select e).ToList();
 
+            //Check to see if the query above returned a value
+            if (data.Count != 0)
+            {
+                //if username and password entered equal something from the database return true
+                if (username == data[0].UserID && password == data[0].Password)
+                {
+                    //set return value to true
+                    successfulLogin = true;
+                }
+            }
+
+            //return value to caller
             return successfulLogin;
         }
     }
