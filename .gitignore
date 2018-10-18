@@ -6,7 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-"C:\Users\Douglas\source\repos\dar81281\Library\Library\App.config"
+App.config
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
