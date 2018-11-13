@@ -78,7 +78,7 @@ namespace Library
                                         Console.WriteLine("Implement option 7");
                                         break; //case 7 break
                                     case 8:
-                                        //logoff
+                                        //log-off
                                         break; //case 8 break
                                     default:
                                         //Display error
@@ -110,7 +110,7 @@ namespace Library
         {
             string userInput;
 
-            //Change the console color to white to indicate a paetron user
+            //Change the console color to white to indicate a patron user
             Console.ForegroundColor = ConsoleColor.White;
 
             //Display main menu
@@ -141,7 +141,7 @@ namespace Library
             Console.WriteLine("5. Update an existing book in the system.");
             Console.WriteLine("6. Remove book(s) from the system.");
             Console.WriteLine("7. Display list of Librarians, Cardholders, Authors, and Overdue Books.");
-            Console.WriteLine("8. Logoff.");
+            Console.WriteLine("8. Log-off.");
             Console.Write("Please Choose An Option (1-8): ");
 
             //Get user input
@@ -162,14 +162,14 @@ namespace Library
             Console.Clear();
         }
 
-        //maybe want to create login class so I can return object with username and loginStatus?
+        //maybe want to create login class so I can return object with user name and loginStatus?
         private static bool Login(LibraryInformationEntities context)
         {
             //assume login fails
             bool successfulLogin = false;
 
-            //Get username and password from librarian
-            Console.Write("Enter username: ");
+            //Get user name and password from librarian
+            Console.Write("Enter user name: ");
             string username = Console.ReadLine();
             Console.Write("Enter password: ");
             string password = Console.ReadLine();
@@ -183,7 +183,7 @@ namespace Library
             //Check to see if the query above returned a value
             if (data.Count != 0)
             {
-                //if username and password entered equal something from the database return true
+                //if user name and password entered equal something from the database return true
                 if (username == data[0].UserID && password == data[0].Password)
                 {
                     //set return value to true
