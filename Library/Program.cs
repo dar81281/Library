@@ -35,7 +35,7 @@ namespace Library
                     case 1:
                         //Find feature
                         Console.WriteLine("Implement option 1");
-                        FindMenu();
+                        FindMenu(context);
                             break; //case 1 break
                     case 2:
                         //Librarian login feature
@@ -57,7 +57,7 @@ namespace Library
                                 {
                                     case 1:
                                         Console.WriteLine("Implement option 1");
-                                        FindMenu();
+                                        FindMenu(context);
                                         break; //case 1 break
                                     case 2:
                                         Console.WriteLine("Implement option 2");
@@ -151,17 +151,34 @@ namespace Library
             int.TryParse(userInput, out int selection);
             return selection;
         }
-        private static void FindMenu()
+        private static void FindMenu(LibraryInformationEntities context)
         {
             //get the search term from the user
             Console.Write("Enter a search term: ");
             string search = Console.ReadLine();
-            Console.WriteLine("Implement the find feature");
+            FindBook(context, search);
+            //Console.WriteLine("Implement the find feature");
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
         }
 
+        private static void FindBook(LibraryInformationEntities context, string SearchTerm)
+        {
+            BookBC book = new BookBC();
+            List<Book> foundBooks = book.Search(context, SearchTerm);
+            if (foundBooks.Count > 0)
+            {
+                //Display the found books
+                book.Display(foundBooks);
+
+            }
+            else
+            {
+                //Display a message when no books are found
+                Console.WriteLine($"No books with {SearchTerm} found");
+            }
+        }
         //maybe want to create login class so I can return object with user name and loginStatus?
         private static bool Login(LibraryInformationEntities context)
         {
