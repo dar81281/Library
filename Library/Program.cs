@@ -34,7 +34,6 @@ namespace Library
                 {
                     case 1:
                         //Find feature
-                        Console.WriteLine("Implement option 1");
                         FindMenu(context);
                             break; //case 1 break
                     case 2:
@@ -56,7 +55,6 @@ namespace Library
                                 switch (librarianChoice)
                                 {
                                     case 1:
-                                        Console.WriteLine("Implement option 1");
                                         FindMenu(context);
                                         break; //case 1 break
                                     case 2:
