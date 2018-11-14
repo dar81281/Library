@@ -156,6 +156,22 @@ namespace Library
             string search = Console.ReadLine();
             FindBook(context, search);
             //Console.WriteLine("Implement the find feature");
+
+            int selection = 0;
+            do
+            {
+                Console.Write("Select a book to display more information (0 to exit): ");
+                //Get user input
+                string userInput = Console.ReadLine();
+                //verify the user input is an int
+                int.TryParse(userInput, out selection);
+
+                var data = (from e in context.Books
+                            where e.BookID == selection
+                            select e).ToList();
+                Console.WriteLine("need to display more information about the selected book");
+            } while (selection > 0);
+
             Console.WriteLine("Press enter to continue.");
             Console.ReadLine();
             Console.Clear();
@@ -169,7 +185,6 @@ namespace Library
             {
                 //Display the found books
                 book.Display(foundBooks);
-
             }
             else
             {

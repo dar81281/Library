@@ -34,12 +34,52 @@ namespace Library
         public void Display(List<Book> books)
         {
             //Display column headers
-            Console.WriteLine("{0,-8}{1,-25}{2,-20}{3,-15}{4,4}", "Book ID", "Title", "Author Name", "Publisher", "Year Published");
+            //Console.WriteLine("{0,-8}{1,-25}{2,-20}{3,-15}{4,4}", "Book ID", "Title", "Author Name", "Publisher", "Year Published");
+            Console.WriteLine("Book ID, Title, Author Name, Publisher, Year Published, Available for Checkout");
             //Display each book aligned with the column headers
             foreach (Book book in books)
             {
-                Console.WriteLine("{0,-8}{1,-25}{2,-20}{3,-15}{4,4}", book.BookID, book.Title, book.Author.Person.FirstName + " " + book.Author.Person.LastName, book.Publisher, book.YearPublished.ToString());
+                //Set publisher and yearPublished to N/A by default for null protection
+                string publisher = "N/A";
+                string yearPublished = "N/A";
+                //Set the values to what is in book
+                string bookId = book.BookID.ToString();
+                string bookTitle = book.Title.ToString();
+                string authorFirstName = book.Author.Person.FirstName.ToString();
+                string authorLastName = book.Author.Person.LastName.ToString();
+                //Add null protection to Publisher and YearPublished
+                if (book.Publisher != null)
+                    publisher = book.Publisher.ToString();
+                if (book.YearPublished != null)
+                    yearPublished = book.YearPublished.ToString();
+
+                //Check to see how many copies are in stock
+                int copiesInStock = CountInStockBooks(book);
+                //Assume no copies available
+                string availableForCheckout = "No";
+                //If there are more than 0 copies available change variable to Yes
+                if (copiesInStock > 0)
+                    availableForCheckout = "Yes";
+
+
+                //Console.WriteLine("{0,-8}{1,-25}{2,-20}{3,-15}{4,4}", book.BookID, book.Title, book.Author.Person.FirstName + " " + book.Author.Person.LastName, book.Publisher, book.YearPublished.ToString());
+                Console.WriteLine($"{bookId}. {bookTitle}, {authorFirstName} {authorLastName}, {publisher}, {yearPublished}, {availableForCheckout}");
             }
+        }
+        private int CountInStockBooks(Book book)
+        {
+            int numCopies = book.NumberOfCopies;
+            var context = new LibraryInformationEntities();
+            var data = (from e in context.CheckOutLogs
+                       select e).ToList();
+            foreach (var d in data)
+            {
+                if (d.BookID == book.BookID)
+                {
+                    numCopies--;
+                }
+            }
+            return numCopies;
         }
     }
 }
