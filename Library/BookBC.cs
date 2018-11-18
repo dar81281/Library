@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace Library
 {
-    class BookBC
+    public class BookBC
     {
         public int BookId { get; set; }
         public int  Isbn { get; set; }
         public string Title { get; set; }
         public int AuthorId { get; set; }
         public int NumPages { get; set; }
+        public string Subject { get; set; }
         public string Description { get; set; }
         public string Publisher { get; set; }
         public int YearPublished { get; set; }
@@ -66,7 +67,20 @@ namespace Library
                 Console.WriteLine($"{bookId}. {bookTitle}, {authorFirstName} {authorLastName}, {publisher}, {yearPublished}, {availableForCheckout}");
             }
         }
-        private int CountInStockBooks(Book book)
+        public void DetailedDisplay(Book book)
+        {
+            Console.WriteLine($"Title: {book.Title}");
+            Console.WriteLine($"Author: {book.Author.Person.FirstName} {book.Author.Person.LastName}");
+            Console.WriteLine($"Number of pages: {book.NumPages}");
+            Console.WriteLine($"Subject: {book.Subject}");
+            Console.WriteLine($"Description: {book.Description}");
+            Console.WriteLine($"Publisher: {book.Publisher}");
+            Console.WriteLine($"Year Published: {book.YearPublished}");
+            Console.WriteLine($"Languages Supported: {book.Language}");
+            Console.WriteLine($"Number of copies available: {this.CountInStockBooks(book)}");
+            Console.WriteLine($"Total number of copies: {book.NumberOfCopies}");
+        }
+    private int CountInStockBooks(Book book)
         {
             int numCopies = book.NumberOfCopies;
             var context = new LibraryInformationEntities();
@@ -81,5 +95,12 @@ namespace Library
             }
             return numCopies;
         }
+
+        //public static implicit operator BookBC(Book v)
+        //{
+        //    BookBC bookBC = new BookBC();
+        //    bookBC = v;
+        //    return bookBC;
+        //}
     }
 }

@@ -35,5 +35,12 @@ namespace Library
         public virtual Author Author { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CheckOutLog> CheckOutLogs { get; set; }
+
+        //public static implicit operator Book(BookBC v)
+        //{
+        //    Book book = new Book();
+        //    book = v;
+        //    return book;
+        //}
     }
 }

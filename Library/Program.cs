@@ -154,30 +154,40 @@ namespace Library
             //get the search term from the user
             Console.Write("Enter a search term: ");
             string search = Console.ReadLine();
-            FindBook(context, search);
+            bool booksFound = FindBook(context, search);
             //Console.WriteLine("Implement the find feature");
-
-            int selection = 0;
-            do
+            if (booksFound)
             {
-                Console.Write("Select a book to display more information (0 to exit): ");
-                //Get user input
-                string userInput = Console.ReadLine();
-                //verify the user input is an int
-                int.TryParse(userInput, out selection);
+                int selection = 0;
+                do
+                {
+                    Console.Write("\nSelect a book to display more information (0 to exit): ");
+                    //Get user input
+                    string userInput = Console.ReadLine();
+                    //verify the user input is an int
+                    int.TryParse(userInput, out selection);
 
-                var data = (from e in context.Books
-                            where e.BookID == selection
-                            select e).ToList();
-                Console.WriteLine("need to display more information about the selected book");
-            } while (selection > 0);
-
-            Console.WriteLine("Press enter to continue.");
-            Console.ReadLine();
+                    //search for the book that the user entered
+                    if (selection != 0)
+                    {
+                        var data = (from e in context.Books
+                                    where e.BookID == selection
+                                    select e).ToList();
+                        Book book = data[0];
+                        BookBC bookBc = new BookBC();
+                        bookBc.DetailedDisplay(book);
+                    }
+                } while (selection > 0);
+            }
+            else
+            {
+                Console.WriteLine("Press enter to continue.");
+                Console.ReadLine();
+            }
             Console.Clear();
         }
 
-        private static void FindBook(LibraryInformationEntities context, string SearchTerm)
+        private static bool FindBook(LibraryInformationEntities context, string SearchTerm)
         {
             BookBC book = new BookBC();
             List<Book> foundBooks = book.Search(context, SearchTerm);
@@ -185,11 +195,13 @@ namespace Library
             {
                 //Display the found books
                 book.Display(foundBooks);
+                return true;
             }
             else
             {
                 //Display a message when no books are found
                 Console.WriteLine($"No books with {SearchTerm} found");
+                return false;
             }
         }
         //maybe want to create login class so I can return object with user name and loginStatus?
