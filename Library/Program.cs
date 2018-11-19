@@ -154,12 +154,12 @@ namespace Library
             //get the search term from the user
             Console.Write("Enter a search term: ");
             string search = Console.ReadLine();
-            bool booksFound = FindBook(context, search);
-            //Console.WriteLine("Implement the find feature");
-            if (booksFound)
+            int selection = 0;
+            do
             {
-                int selection = 0;
-                do
+                bool booksFound = FindBook(context, search);
+                //Console.WriteLine("Implement the find feature");
+                if (booksFound)
                 {
                     Console.Write("\nSelect a book to display more information (0 to exit): ");
                     //Get user input
@@ -176,15 +176,12 @@ namespace Library
                         Book book = data[0];
                         BookBC bookBc = new BookBC();
                         bookBc.DetailedDisplay(book);
+                        Console.WriteLine("\nPress enter to continue.");
+                        Console.ReadLine();
                     }
-                } while (selection > 0);
-            }
-            else
-            {
-                Console.WriteLine("Press enter to continue.");
-                Console.ReadLine();
-            }
-            Console.Clear();
+                }
+                Console.Clear();
+            } while (selection > 0);
         }
 
         private static bool FindBook(LibraryInformationEntities context, string SearchTerm)
@@ -235,6 +232,29 @@ namespace Library
 
             //return value to caller
             return successfulLogin;
+        }
+        private void CheckInBook(LibraryInformationEntities context)
+        {
+            string checkIn = "in";
+            CheckInOutHelper helper = CheckInOutHelper(checkIn);
+        }
+        private void CheckOutBook(LibraryInformationEntities context)
+        {
+            string checkOut = "out";
+            CheckInOutHelper helper = CheckInOutHelper(checkOut);
+        }
+        private CheckInOutHelper CheckInOutHelper(string checkInOut)
+        {
+            Console.Write("Enter the card holder's ID: ");
+            string cardId = Console.ReadLine();
+            Console.Write($"Enter the ISBN of the book to be checked {checkInOut}: ");
+            string isbn = Console.ReadLine();
+
+            int.TryParse(cardId, out int intCardID);
+            int.TryParse(isbn, out int intIsbn);
+            CheckInOutHelper helper = new CheckInOutHelper(intCardID, intIsbn);
+
+            return helper;
         }
     }
 }

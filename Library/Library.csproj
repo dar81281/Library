@@ -63,6 +63,7 @@
       <DependentUpon>LibraryModel.tt</DependentUpon>
     </Compile>
     <Compile Include="CardholderBC.cs" />
+    <Compile Include="CheckInOutHelper.cs" />
     <Compile Include="CheckOutLog.cs">
       <DependentUpon>LibraryModel.tt</DependentUpon>
     </Compile>
