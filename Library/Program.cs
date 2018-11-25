@@ -278,11 +278,6 @@ namespace Library
                     Console.WriteLine("Card holder not found in the database, please try again");
                     Console.ReadLine();
                 }
-
-                if (CheckOutData.Count > 0)
-                {
-                    CheckOutLogBC cil = new CheckOutLogBC();
-                }
             }
             else
             {
