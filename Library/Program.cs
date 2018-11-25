@@ -270,6 +270,7 @@ namespace Library
                             //send delete to CheckOutLog
                             var d = new CheckOutLog { CheckOutLogID = cod.CardholderID };
                             context.CheckOutLogs.Remove(d);
+                            context.SaveChanges();
                         }
                     }
                 }
