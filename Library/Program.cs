@@ -58,10 +58,10 @@ namespace Library
                                         FindMenu(context);
                                         break; //case 1 break
                                     case 2:
-                                        Console.WriteLine("Implement option 2");
+                                        CheckOutBook(context);
                                         break; //case 2 break
                                     case 3:
-                                        Console.WriteLine("Implement option 3");
+                                        CheckInBook(context);
                                         break; //case 3 break
                                     case 4:
                                         Console.WriteLine("Implement option 4");
@@ -198,6 +198,8 @@ namespace Library
             {
                 //Display a message when no books are found
                 Console.WriteLine($"No books with {SearchTerm} found");
+                Console.WriteLine("\nPress enter to continue.");
+                Console.ReadLine();
                 return false;
             }
         }
@@ -233,26 +235,74 @@ namespace Library
             //return value to caller
             return successfulLogin;
         }
-        private void CheckInBook(LibraryInformationEntities context)
+        private static void CheckInBook(LibraryInformationEntities context)
         {
             string checkIn = "in";
+            //Creates a helper to get the ISBN and CardID from the librarian
             CheckInOutHelper helper = CheckInOutHelper(checkIn);
+
+            //Finds the book of the ISBN entered
+            var bookData = (from e in context.Books
+                            where e.ISBN == helper.Isbn
+                            select e).ToList();
+
+            //Finds the card holder of the CardID entered
+            var cardHolderData = (from e in context.Cardholders
+                                  where e.LibraryCardID == helper.CardID
+                                  select e).ToList();
+
+            if (bookData.Count > 0)
+            {
+                //Finds the log entry(s) of the books checked out
+                int bookID = bookData[0].BookID;
+                var CheckOutData = (from e in context.CheckOutLogs
+                                    where e.BookID == (bookID)
+                                    select e).ToList();
+
+                if (cardHolderData.Count > 0)
+                {
+                    //Loop through each checkout log
+                    foreach (CheckOutLog cod in CheckOutData)
+                    {
+                        //verify the CardHolderID and the Book ID match in the log
+                        if (cod.CardholderID == cardHolderData[0].CardHolderID && cod.BookID == bookID)
+                        {
+                            //send delete to CheckOutLog
+                            var d = new CheckOutLog { CheckOutLogID = cod.CardholderID };
+                            context.CheckOutLogs.Remove(d);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Card holder not found in the database, please try again");
+                    Console.ReadLine();
+                }
+
+                if (CheckOutData.Count > 0)
+                {
+                    CheckOutLogBC cil = new CheckOutLogBC();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Book not found in the database, please try again");
+                Console.ReadLine();
+            }
         }
-        private void CheckOutBook(LibraryInformationEntities context)
+        private static void CheckOutBook(LibraryInformationEntities context)
         {
             string checkOut = "out";
             CheckInOutHelper helper = CheckInOutHelper(checkOut);
         }
-        private CheckInOutHelper CheckInOutHelper(string checkInOut)
+        private static CheckInOutHelper CheckInOutHelper(string checkInOut)
         {
             Console.Write("Enter the card holder's ID: ");
             string cardId = Console.ReadLine();
             Console.Write($"Enter the ISBN of the book to be checked {checkInOut}: ");
             string isbn = Console.ReadLine();
 
-            int.TryParse(cardId, out int intCardID);
-            int.TryParse(isbn, out int intIsbn);
-            CheckInOutHelper helper = new CheckInOutHelper(intCardID, intIsbn);
+            CheckInOutHelper helper = new CheckInOutHelper(cardId, isbn);
 
             return helper;
         }

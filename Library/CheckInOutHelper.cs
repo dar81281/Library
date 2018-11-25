@@ -8,10 +8,10 @@ namespace Library
 {
     class CheckInOutHelper 
     {
-        public int CardID { get; set; }
-        public int Isbn { get; set; }
+        public string CardID { get; set; }
+        public string Isbn { get; set; }
 
-        public CheckInOutHelper(int cardID, int isbn )
+        public CheckInOutHelper(string cardID, string isbn )
         {
             CardID = cardID;
             Isbn = isbn;
