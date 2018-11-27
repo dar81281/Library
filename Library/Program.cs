@@ -64,16 +64,16 @@ namespace Library
                                         CheckInBook(context);
                                         break; //case 3 break
                                     case 4:
-                                        Console.WriteLine("Implement option 4");
+                                        AddBook(context);
                                         break; //case 4 break
                                     case 5:
-                                        Console.WriteLine("Implement option 5");
+                                        UpdateBook(context);
                                         break; //case 5 break
                                     case 6:
-                                        Console.WriteLine("Implement option 6");
+                                        RemoveBook(context);
                                         break; //case 6 break
                                     case 7:
-                                        Console.WriteLine("Implement option 7");
+                                        DisplayLists(context);
                                         break; //case 7 break
                                     case 8:
                                         //log-off
@@ -395,6 +395,82 @@ namespace Library
             CheckInOutHelper helper = new CheckInOutHelper(cardId, isbn);
 
             return helper;
+        }
+        private static void AddBook(LibraryInformationEntities context)
+        {
+            Book book = new Book();
+            Console.Write("Enter the ISBN: ");
+            book.ISBN = Console.ReadLine();
+
+            var bookData = (from e in context.Books
+                            where e.ISBN == book.ISBN
+                            select e).ToList();
+
+            if (bookData.Count > 0)
+            {
+                Console.WriteLine("Book is already in the system.");
+                Console.Write("Enter the number of copies you wish to add: ");
+                string strCopies = Console.ReadLine();
+                int.TryParse(strCopies, out int intCopies);
+                bookData[0].NumberOfCopies = bookData[0].NumberOfCopies + intCopies;
+                context.SaveChanges();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Successfully added {intCopies} copies.");
+                Console.WriteLine("\nPress enter to continue.");
+                Console.ReadLine();
+                Console.Clear();
+            }
+            else
+            {
+                Console.Write("Enter the book title: ");
+                book.Title = Console.ReadLine();
+                Console.Write("Enter the author's first name: ");
+                string authorFirstName = Console.ReadLine();
+                Console.Write("Enter the author's Last name: ");
+                string authorLastName = Console.ReadLine();
+                //Do something to find existing author or create new author
+                book.AuthorID = 8;
+                Console.Write("Enter the book's page count: ");
+                string strNumPages = Console.ReadLine();
+                int.TryParse(strNumPages, out int intNumPages);
+                book.NumPages = intNumPages;
+                Console.Write("Enter the book's subject: ");
+                book.Subject = Console.ReadLine();
+                Console.Write("Enter the book's description: ");
+                book.Description = Console.ReadLine();
+                Console.Write("Enter the book's publisher: ");
+                book.Publisher = Console.ReadLine();
+                Console.Write("Enter the year the book was published: ");
+                book.YearPublished = Console.ReadLine();
+                //need to validate that only 4 digits are entered for year published
+                Console.Write("Enter the book's language: ");
+                book.Language = Console.ReadLine();
+                Console.Write("Enter the number of books: ");
+                string strCopies = Console.ReadLine();
+                int.TryParse(strCopies, out int intCopies);
+                book.NumberOfCopies = intCopies;
+
+                //Add the book to the database and save
+                context.Books.Add(book);
+                context.SaveChanges();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Successfully added book to the system.");
+                Console.WriteLine("\nPress enter to continue.");
+                Console.ReadLine();
+                Console.Clear();
+            }
+        }
+        private static void UpdateBook(LibraryInformationEntities context)
+        {
+            throw new NotImplementedException();
+        }
+        private static void RemoveBook(LibraryInformationEntities context)
+        {
+            throw new NotImplementedException();
+        }
+        private static void DisplayLists(LibraryInformationEntities context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
