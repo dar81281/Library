@@ -256,40 +256,134 @@ namespace Library
                 //Finds the log entry(s) of the books checked out
                 int bookID = bookData[0].BookID;
                 var CheckOutData = (from e in context.CheckOutLogs
-                                    where e.BookID == (bookID)
+                                    where e.BookID == bookID
                                     select e).ToList();
 
                 if (cardHolderData.Count > 0)
                 {
-                    //Loop through each checkout log
-                    foreach (CheckOutLog cod in CheckOutData)
+                    if (CheckOutData.Count > 0)
                     {
-                        //verify the CardHolderID and the Book ID match in the log
-                        if (cod.CardholderID == cardHolderData[0].CardHolderID && cod.BookID == bookID)
+                        //Loop through each checkout log
+                        foreach (CheckOutLog cod in CheckOutData)
                         {
-                            //send delete to CheckOutLog
-                            var d = new CheckOutLog { CheckOutLogID = cod.CardholderID };
-                            context.CheckOutLogs.Remove(d);
-                            context.SaveChanges();
+                            //verify the CardHolderID and the Book ID match in the log
+                            if (cod.CardholderID == cardHolderData[0].CardHolderID && cod.BookID == bookID)
+                            {
+                                //send delete to CheckOutLog
+                                //var d = new CheckOutLog { CheckOutLogID = cod.CheckOutLogID };
+                                context.CheckOutLogs.Remove(cod);
+                                context.SaveChanges();
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Successfully checked in book.");
+                                Console.WriteLine("\nPress enter to continue.");
+                                Console.ReadLine();
+                                Console.Clear();
+                            }
                         }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("The selected book is not checked out to the card holder.");
+                        Console.WriteLine("\nPress enter to continue.");
+                        Console.ReadLine();
+                        Console.Clear();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Card holder not found in the database, please try again");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Card holder not found in the database, please try again.");
+                    Console.WriteLine("\nPress enter to continue.");
                     Console.ReadLine();
+                    Console.Clear();
                 }
             }
             else
             {
-                Console.WriteLine("Book not found in the database, please try again");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Book not found in the database, please try again.");
+                Console.WriteLine("\nPress enter to continue.");
                 Console.ReadLine();
+                Console.Clear();
             }
         }
         private static void CheckOutBook(LibraryInformationEntities context)
         {
             string checkOut = "out";
+            //Creates a helper to get the ISBN and CardID from the librarian
             CheckInOutHelper helper = CheckInOutHelper(checkOut);
+
+            //Finds the book of the ISBN entered
+            var bookData = (from e in context.Books
+                            where e.ISBN == helper.Isbn
+                            select e).ToList();
+
+            if (bookData.Count > 0)
+            {
+                //check if copies of the book are in stock
+                BookBC book = new BookBC();
+                int booksInStock = book.CountInStockBooks(bookData[0]);
+                if (booksInStock > 0)
+                {
+                    //Finds the card holder of the CardID entered
+                    var cardHolderData = (from e in context.Cardholders
+                                          where e.LibraryCardID == helper.CardID
+                                          select e).ToList();
+
+                    //finds the checkout log entries for the card holder
+                    int cardholderID = cardHolderData[0].CardHolderID;
+                    var CheckOutData = (from e in context.CheckOutLogs
+                                        where e.CardholderID == cardholderID
+                                        select e).ToList();
+
+                    foreach (CheckOutLog col in CheckOutData)
+                    {
+                        DateTime time = DateTime.Now;
+                        //check if user has overdue book (90 days)
+                        if (col.CheckOutDate > time.AddDays(-90))
+                        {
+                            //Allow book to be checked out
+
+                            //Stage the changes to the bookToBeCheckedOut CheckOutLog object
+                            CheckOutLog bookToBeCheckedOut = new CheckOutLog
+                            {
+                                BookID = bookData[0].BookID,
+                                CardholderID = cardholderID,
+                                CheckOutDate = DateTime.Now
+                            };
+
+                            //Add the record to the database and save
+                            context.CheckOutLogs.Add(bookToBeCheckedOut);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"{cardHolderData[0].Person.FirstName} {cardHolderData[0].Person.LastName} has an overdue book and is not allowed to checkout books at this time.\n");
+                            Console.WriteLine("\nPress enter to continue.");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                    }
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{book.Title} is not in stock, please check back later.");
+                    Console.WriteLine("\nPress enter to continue.");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Book not found in the database, please try again.");
+                Console.WriteLine("\nPress enter to continue.");
+                Console.ReadLine();
+                Console.Clear();
+            }
         }
         private static CheckInOutHelper CheckInOutHelper(string checkInOut)
         {

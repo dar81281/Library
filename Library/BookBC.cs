@@ -80,7 +80,7 @@ namespace Library
             Console.WriteLine($"Number of copies available: {this.CountInStockBooks(book)}");
             Console.WriteLine($"Total number of copies: {book.NumberOfCopies}");
         }
-        private int CountInStockBooks(Book book)
+        public int CountInStockBooks(Book book)
         {
             int numCopies = book.NumberOfCopies;
             var context = new LibraryInformationEntities();
