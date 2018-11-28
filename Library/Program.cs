@@ -428,7 +428,6 @@ namespace Library
                 string authorFirstName = Console.ReadLine();
                 Console.Write("Enter the author's Last name: ");
                 string authorLastName = Console.ReadLine();
-                int authorID;
                 var authorData = (from e in context.Authors
                                 where e.Person.FirstName == authorFirstName
                                 && e.Person.LastName == authorLastName
