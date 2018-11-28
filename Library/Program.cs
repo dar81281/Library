@@ -847,7 +847,104 @@ namespace Library
         }
         private static void RemoveBook(LibraryInformationEntities context)
         {
-            throw new NotImplementedException();
+            //get ISBN
+            Console.Write("Enter the book's ISBN: ");
+            string isbn = Console.ReadLine();
+
+            var bookData = (from e in context.Books
+                        where e.ISBN == isbn
+                        select e).ToList();
+            if (bookData.Count > 0)
+            {
+                Book b = bookData[0];
+                BookBC tempBook = new BookBC();
+                int inStockBooks = tempBook.CountInStockBooks(b);
+                int copiesCheckedOut = b.NumberOfCopies - inStockBooks;
+
+                //how many to remove
+                int intNumberToRemove;
+                do
+                {
+                    Console.WriteLine($"There are currently {copiesCheckedOut} checked out and {b.NumberOfCopies} total copies.");
+                    Console.Write("Please enter the number of copies that you want to remove from the system: ");
+                    string strNumberToRemove = Console.ReadLine();
+                    int.TryParse(strNumberToRemove, out intNumberToRemove);
+
+                    if(b.NumberOfCopies - intNumberToRemove >= 0)
+                    {
+                        if (b.NumberOfCopies - intNumberToRemove >= copiesCheckedOut)
+                        {
+                            if (b.NumberOfCopies - intNumberToRemove == 0)
+                            {
+                                //call delete
+                                context.Books.Remove(b);
+                                try
+                                {
+                                    context.SaveChanges();
+                                    ConsoleColor foreground = Console.ForegroundColor;
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.WriteLine($"Successfully removed the book from the system.");
+                                    Console.ForegroundColor = foreground;
+                                }
+                                catch (Exception e)
+                                {
+                                    ConsoleColor foreground = Console.ForegroundColor;
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Failed to remove book from the system. {e.InnerException.InnerException.Message}");
+                                    Console.ForegroundColor = foreground;
+                                }
+                            }
+                            else
+                            {
+                                //call update
+                                var updateBook = context.Books.FirstOrDefault(c => c.BookID == b.BookID);
+                                updateBook.NumberOfCopies = b.NumberOfCopies - intNumberToRemove;
+
+                                try
+                                {
+                                    context.SaveChanges();
+                                    ConsoleColor foreground = Console.ForegroundColor;
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.WriteLine($"Successfully removed {intNumberToRemove} books from the system.");
+                                    Console.ForegroundColor = foreground;
+                                }
+                                catch (Exception e)
+                                {
+                                    ConsoleColor foreground = Console.ForegroundColor;
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Failed to update book in the system. {e.InnerException.InnerException.Message}");
+                                    Console.ForegroundColor = foreground;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //re-enter, result can't be less than number checked out
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("The number you entered is invalid. There are too many books checked out. Please try again.");
+                            Console.ForegroundColor = foreground;
+                            intNumberToRemove = -1;
+                        }
+                    }
+                    else
+                    {
+                        //re-enter, can't be less than 0
+                        ConsoleColor foreground = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("The number you entered is greater than the total number of books. Please try again.");
+                        Console.ForegroundColor = foreground;
+                        intNumberToRemove = -1;
+                    }
+
+                } while (intNumberToRemove == -1);
+                
+                Console.Write("Press enter to continue.");
+                Console.ReadLine();
+                Console.Clear();
+                //do math
+                //update or delete
+            }
         }
         private static void DisplayLists(LibraryInformationEntities context)
         {
