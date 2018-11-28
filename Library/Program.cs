@@ -428,47 +428,49 @@ namespace Library
                 string authorFirstName = Console.ReadLine();
                 Console.Write("Enter the author's Last name: ");
                 string authorLastName = Console.ReadLine();
-                var authorData = (from e in context.Authors
-                                where e.Person.FirstName == authorFirstName
-                                && e.Person.LastName == authorLastName
-                                select e).ToList();
+                Author a = CreateAuthor(context, authorFirstName, authorLastName);
+                book.AuthorID = a.AuthorID;
+                //var authorData = (from e in context.Authors
+                //                where e.Person.FirstName == authorFirstName
+                //                && e.Person.LastName == authorLastName
+                //                select e).ToList();
 
-                if (authorData.Count > 0)
-                {
-                    Author a = authorData[0];
-                    book.AuthorID = a.AuthorID;
-                }
-                else
-                {
-                    var peopleData = (from e in context.People
-                                      where e.FirstName == authorFirstName
-                                      && e.LastName == authorLastName
-                                      select e).ToList();
-                    Console.Write($"Author not found, please enter a Biography for {authorFirstName} {authorLastName}: ");
-                    string bio = Console.ReadLine();
-                    Author author;
-                    if (peopleData.Count > 0)
-                    {
-                        Person p = peopleData[0];
-                        author = new Author(p, bio);
-                    }
-                    else
-                    {
-                        Person p = new Person(authorFirstName, authorLastName);
-                        context.People.Add(p);
-                        context.SaveChanges();
-                        author = new Author(p, bio);
-                    }
-                    //Add the book to the database and save
-                    context.Authors.Add(author);
-                    context.SaveChanges();
-                    ConsoleColor foreground = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Successfully added author to the system.");
-                    Console.ForegroundColor = foreground;
-                    book.AuthorID = author.AuthorID;
-                }
-                
+                //if (authorData.Count > 0)
+                //{
+                //    Author a = authorData[0];
+                //    book.AuthorID = a.AuthorID;
+                //}
+                //else
+                //{
+                //    var peopleData = (from e in context.People
+                //                      where e.FirstName == authorFirstName
+                //                      && e.LastName == authorLastName
+                //                      select e).ToList();
+                //    Console.Write($"Author not found, please enter a Biography for {authorFirstName} {authorLastName}: ");
+                //    string bio = Console.ReadLine();
+                //    Author author;
+                //    if (peopleData.Count > 0)
+                //    {
+                //        Person p = peopleData[0];
+                //        author = new Author(p, bio);
+                //    }
+                //    else
+                //    {
+                //        Person p = new Person(authorFirstName, authorLastName);
+                //        context.People.Add(p);
+                //        context.SaveChanges();
+                //        author = new Author(p, bio);
+                //    }
+                //    //Add the author to the database and save
+                //    context.Authors.Add(author);
+                //    context.SaveChanges();
+                //    ConsoleColor foreground = Console.ForegroundColor;
+                //    Console.ForegroundColor = ConsoleColor.Green;
+                //    Console.WriteLine($"Successfully added author to the system.");
+                //    Console.ForegroundColor = foreground;
+                //    book.AuthorID = author.AuthorID;
+                //}
+
                 do
                 {
                     Console.Write("Enter the book's page count: ");
@@ -530,7 +532,274 @@ namespace Library
         }
         private static void UpdateBook(LibraryInformationEntities context)
         {
-            throw new NotImplementedException();
+            var bookData = (from e in context.Books
+                            select e).ToList();
+            BookBC book = new BookBC();
+            book.Display(bookData);
+
+            Console.Write("\nSelect a book to update (0 to exit): ");
+            //Get user input
+            string userInput = Console.ReadLine();
+            //verify the user input is an int
+            int.TryParse(userInput, out int selection);
+
+            //search for the book that the user entered
+            if (selection != 0)
+            {
+                var data = (from e in context.Books
+                            where e.BookID == selection
+                            select e).ToList();
+
+                Book b = data[0];
+
+                Console.Write($"ISBN currently set to {b.ISBN} enter a value if you wish to update (leave blank to ignore): ");
+                string tempISBN = Console.ReadLine();
+                Console.Write($"Title currently set to {b.Title} enter a value if you wish to update (leave blank to ignore): ");
+                string tempTitle = Console.ReadLine();
+                Console.Write($"Author currently set to {b.Author.Person.FirstName} {b.Author.Person.LastName} a new first name (leave blank to ignore): ");
+                string tempFirstName = Console.ReadLine();
+                Console.Write("Enter a new last name (leave blank to ignore): ");
+                string tempLastName = Console.ReadLine();
+                string first;
+                string last;
+                if (tempFirstName != "")
+                {
+                    first = tempFirstName;
+                }
+                else
+                {
+                    first = b.Author.Person.FirstName;
+                }
+                if (tempLastName != "")
+                {
+                    last = tempLastName;
+                }
+                else
+                {
+                    last = b.Author.Person.LastName;
+                }
+                Author tempAuthor = CreateAuthor(context, first, last);
+                int tempIntNumPages;
+                do
+                {
+                    Console.Write($"NumPages currently set to {b.NumPages} enter a value if you wish to update (leave blank to ignore): ");
+                    string tempNumPages = Console.ReadLine();
+
+                    if (tempNumPages != "")
+                    {
+                        int.TryParse(tempNumPages, out tempIntNumPages);
+                        if (tempIntNumPages == 0)
+                        {
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid entry, please only use numbers.");
+                            Console.ForegroundColor = foreground;
+                        }
+                    }
+                    else
+                    {
+                        tempIntNumPages = -1;
+                        break;
+                    }
+                } while (tempIntNumPages == 0);
+                Console.Write($"Subject currently set to {b.Subject} enter a value if you wish to update (leave blank to ignore): ");
+                string tempSubject = Console.ReadLine();
+                Console.Write($"Description currently set to {b.Description} enter a value if you wish to update (leave blank to ignore): ");
+                string tempDescription = Console.ReadLine();
+                Console.Write($"Publisher currently set to {b.Publisher} enter a value if you wish to update (leave blank to ignore): ");
+                string tempPublisher = Console.ReadLine();
+                string tempYearPublished;
+                do
+                {
+                    Console.Write($"YearPublished currently set to {b.YearPublished} enter a value if you wish to update (leave blank to ignore): ");
+                    tempYearPublished = Console.ReadLine();
+                    if (tempYearPublished != "")
+                    {
+                        if (tempYearPublished.Length != 4)
+                        {
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Year published must be 4 digits.  Please enter a new year.");
+                            Console.ForegroundColor = foreground;
+                        }
+                    }
+                    else
+                    {
+                        tempYearPublished = "-1";
+                        break;
+                    }
+                } while (tempYearPublished.Length != 4);
+                Console.Write($"Language currently set to {b.Language} enter a value if you wish to update (leave blank to ignore): ");
+                string tempLanguage = Console.ReadLine();
+                int intTempNumberOfCopies;
+                do
+                {
+                    Console.Write($"NumberOfCopies currently set to {b.NumberOfCopies} enter a value if you wish to update (leave blank to ignore): ");
+                    string tempNumberOfCopies = Console.ReadLine();
+                    if (tempNumberOfCopies != "")
+                    {
+                        int.TryParse(tempNumberOfCopies, out intTempNumberOfCopies);
+                        if (intTempNumberOfCopies == 0)
+                        {
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid entry, please only use numbers.");
+                            Console.ForegroundColor = foreground;
+                        }
+                    }
+                    else
+                    {
+                        intTempNumberOfCopies = -1;
+                        break;
+                    }
+                } while (intTempNumberOfCopies == 0);
+
+                Book tempBook = new Book();
+                if (tempISBN != "")
+                {
+                    tempBook.ISBN = tempISBN;
+                }
+                else
+                {
+                    tempBook.ISBN = b.ISBN;
+                }
+                if (tempTitle != "")
+                {
+                    tempBook.Title = tempTitle;
+                }
+                else
+                {
+                    tempBook.Title = b.Title;
+                }
+                tempBook.Author = tempAuthor;
+                tempBook.AuthorID = tempAuthor.AuthorID;
+                //tempBook.Author = b.Author;
+                if (tempIntNumPages != -1)
+                {
+                    tempBook.NumPages = tempIntNumPages;
+                }
+                else
+                {
+                    tempBook.NumPages = b.NumPages;
+                }
+                if (tempSubject != "")
+                {
+                    tempBook.Subject = tempSubject;
+                }
+                else
+                {
+                    tempBook.Subject = b.Subject;
+                }
+                if (tempDescription != "")
+                {
+                    tempBook.Description = tempDescription;
+                }
+                else
+                {
+                    tempBook.Description = b.Description;
+                }
+                if (tempPublisher != "")
+                {
+                    tempBook.Publisher = tempPublisher;
+                }
+                else
+                {
+                    tempBook.Publisher = b.Publisher;
+                }
+                if (tempYearPublished != "-1")
+                {
+                    tempBook.YearPublished = tempYearPublished;
+                }
+                else
+                {
+                    tempBook.YearPublished = b.YearPublished;
+                }
+                if (tempLanguage != "")
+                {
+                    tempBook.Language = tempLanguage;
+                }
+                else
+                {
+                    tempBook.Language = b.Language;
+                }
+                if (intTempNumberOfCopies != -1)
+                {
+                    tempBook.NumberOfCopies = intTempNumberOfCopies;
+                }
+                else
+                {
+                    tempBook.NumberOfCopies = b.NumberOfCopies;
+                }
+                tempBook.BookID = b.BookID;
+                string answer;
+                do
+                {
+                    Console.WriteLine("\nYou are going to replace this book:");
+                    book.DetailedDisplay(b);
+                    Console.WriteLine("\nwith this book:");
+                    book.DetailedDisplay(tempBook);
+                    Console.Write("\nAre you sure you wish to continue? (enter 'y' to confirm): ");
+                    answer = Console.ReadLine();
+                    if (answer.ToUpper() == "Y")
+                    {
+                        //Commit the change to the database
+                        //context.Books.Attach(b);
+                        //b = tempBook;
+                        //context.Entry(b).State = EntityState.Modified;
+
+                        //context.Entry(b).State = b.BookID == 0 ?
+                        //                         EntityState.Added :
+                        //                         EntityState.Modified;
+                        //b = tempBook;
+
+                        //context.Books.Attach(context.Books.Single(c => c.BookID == tempBook.BookID));
+                        //context.Books.ApplyCurrentValues(tempBook);
+
+                        var updateBook = context.Books.FirstOrDefault(c => c.BookID == tempBook.BookID);
+                        updateBook.ISBN = tempBook.ISBN;
+                        updateBook.Title = tempBook.Title;
+                        updateBook.AuthorID = tempBook.AuthorID;
+                        updateBook.NumPages = tempBook.NumPages;
+                        updateBook.Subject = tempBook.Subject;
+                        updateBook.Description = tempBook.Description;
+                        updateBook.Publisher = tempBook.Publisher;
+                        updateBook.YearPublished = tempBook.YearPublished;
+                        updateBook.Language = tempBook.Language;
+                        updateBook.NumberOfCopies = tempBook.NumberOfCopies;
+                        //updateBook = tempBook;
+
+                        //b = tempBook;
+
+                        //data[0] = tempBook;
+
+                        try
+                        {
+                            context.SaveChanges();
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Successfully updated book in the system.");
+                            Console.ForegroundColor = foreground;
+                        }
+                        catch (Exception e)
+                        {
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Failed to update book in the system. {e.InnerException.InnerException.Message}");
+                            Console.ForegroundColor = foreground;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nOperation canceled, returning to main menu");
+                        break;
+                    }
+                } while (answer.ToUpper() != "Y");
+
+                Console.WriteLine("\nPress enter to continue.");
+                Console.ReadLine();
+            }
+
+            Console.Clear();
         }
         private static void RemoveBook(LibraryInformationEntities context)
         {
@@ -539,6 +808,50 @@ namespace Library
         private static void DisplayLists(LibraryInformationEntities context)
         {
             throw new NotImplementedException();
+        }
+        private static Author CreateAuthor(LibraryInformationEntities context, string authorFirstName, string authorLastName)
+        {
+            var authorData = (from e in context.Authors
+                              where e.Person.FirstName == authorFirstName
+                              && e.Person.LastName == authorLastName
+                              select e).ToList();
+
+            if (authorData.Count > 0)
+            {
+                Author a = authorData[0];
+                //book.AuthorID = a.AuthorID;
+                return a;
+            }
+            else
+            {
+                var peopleData = (from e in context.People
+                                  where e.FirstName == authorFirstName
+                                  && e.LastName == authorLastName
+                                  select e).ToList();
+                Console.Write($"Author not found, please enter a Biography for {authorFirstName} {authorLastName}: ");
+                string bio = Console.ReadLine();
+                Author author;
+                if (peopleData.Count > 0)
+                {
+                    Person p = peopleData[0];
+                    author = new Author(p, bio);
+                }
+                else
+                {
+                    Person p = new Person(authorFirstName, authorLastName);
+                    context.People.Add(p);
+                    context.SaveChanges();
+                    author = new Author(p, bio);
+                }
+                //Add the author to the database and save
+                context.Authors.Add(author);
+                context.SaveChanges();
+                ConsoleColor foreground = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Successfully added author to the system.");
+                Console.ForegroundColor = foreground;
+                return author;
+            }
         }
     }
 }

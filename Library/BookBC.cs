@@ -9,14 +9,14 @@ namespace Library
     public class BookBC
     {
         public int BookId { get; set; }
-        public int  Isbn { get; set; }
+        public string  Isbn { get; set; }
         public string Title { get; set; }
         public int AuthorId { get; set; }
         public int NumPages { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
         public string Publisher { get; set; }
-        public int YearPublished { get; set; }
+        public string YearPublished { get; set; }
         public string Language { get; set; }
         public int NumberOfCopies { get; set; }
 
