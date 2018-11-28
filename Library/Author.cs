@@ -19,6 +19,16 @@ namespace Library
         {
             this.Books = new HashSet<Book>();
         }
+        public Author(Person p, string bio)
+        {
+            AuthorID = p.PersonID;
+            Bio = bio;
+        }
+        public Author(string first, string last, string bio)
+        {
+            Person p = new Person(first, last);
+            Author a = new Author(p, bio);
+        }
     
         public int AuthorID { get; set; }
         public string Bio { get; set; }

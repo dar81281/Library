@@ -18,6 +18,15 @@ namespace Library
         public string FirstName { get; set; }
         public string LastName { get; set; }
     
+        public Person()
+        {
+
+        }
+        public Person(string first, string last)
+        {
+            FirstName = first;
+            LastName = last;
+        }
         public virtual Author Author { get; set; }
         public virtual Cardholder Cardholder { get; set; }
         public virtual Librarian Librarian { get; set; }

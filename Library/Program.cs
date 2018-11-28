@@ -428,27 +428,96 @@ namespace Library
                 string authorFirstName = Console.ReadLine();
                 Console.Write("Enter the author's Last name: ");
                 string authorLastName = Console.ReadLine();
-                //Do something to find existing author or create new author
-                book.AuthorID = 8;
-                Console.Write("Enter the book's page count: ");
-                string strNumPages = Console.ReadLine();
-                int.TryParse(strNumPages, out int intNumPages);
-                book.NumPages = intNumPages;
+                int authorID;
+                var authorData = (from e in context.Authors
+                                where e.Person.FirstName == authorFirstName
+                                && e.Person.LastName == authorLastName
+                                select e).ToList();
+
+                if (authorData.Count > 0)
+                {
+                    Author a = authorData[0];
+                    book.AuthorID = a.AuthorID;
+                }
+                else
+                {
+                    var peopleData = (from e in context.People
+                                      where e.FirstName == authorFirstName
+                                      && e.LastName == authorLastName
+                                      select e).ToList();
+                    Console.Write($"Author not found, please enter a Biography for {authorFirstName} {authorLastName}: ");
+                    string bio = Console.ReadLine();
+                    Author author;
+                    if (peopleData.Count > 0)
+                    {
+                        Person p = peopleData[0];
+                        author = new Author(p, bio);
+                    }
+                    else
+                    {
+                        Person p = new Person(authorFirstName, authorLastName);
+                        context.People.Add(p);
+                        context.SaveChanges();
+                        author = new Author(p, bio);
+                    }
+                    //Add the book to the database and save
+                    context.Authors.Add(author);
+                    context.SaveChanges();
+                    ConsoleColor foreground = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Successfully added author to the system.");
+                    Console.ForegroundColor = foreground;
+                    book.AuthorID = author.AuthorID;
+                }
+                
+                do
+                {
+                    Console.Write("Enter the book's page count: ");
+                    string strNumPages = Console.ReadLine();
+                    int.TryParse(strNumPages, out int intNumPages);
+                    book.NumPages = intNumPages;
+                    if (book.NumPages == 0)
+                    {
+                        ConsoleColor foreground = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid entry, please only use numbers.");
+                        Console.ForegroundColor = foreground;
+                    }
+                } while (book.NumPages == 0);
                 Console.Write("Enter the book's subject: ");
                 book.Subject = Console.ReadLine();
                 Console.Write("Enter the book's description: ");
                 book.Description = Console.ReadLine();
                 Console.Write("Enter the book's publisher: ");
                 book.Publisher = Console.ReadLine();
-                Console.Write("Enter the year the book was published: ");
-                book.YearPublished = Console.ReadLine();
-                //need to validate that only 4 digits are entered for year published
+                do
+                {
+                    Console.Write("Enter the year the book was published: ");
+                    book.YearPublished = Console.ReadLine();
+                    if (book.YearPublished.Length != 4)
+                    {
+                        ConsoleColor foreground = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Year published must be 4 digits.  Please enter a new year.");
+                        Console.ForegroundColor = foreground;
+                    }
+                } while (book.YearPublished.Length != 4);
                 Console.Write("Enter the book's language: ");
                 book.Language = Console.ReadLine();
-                Console.Write("Enter the number of books: ");
-                string strCopies = Console.ReadLine();
-                int.TryParse(strCopies, out int intCopies);
-                book.NumberOfCopies = intCopies;
+                do
+                {
+                    Console.Write("Enter the number of books: ");
+                    string strCopies = Console.ReadLine();
+                    int.TryParse(strCopies, out int intCopies);
+                    book.NumberOfCopies = intCopies;
+                    if (book.NumberOfCopies == 0)
+                    {
+                        ConsoleColor foreground = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid entry, please only use numbers.");
+                        Console.ForegroundColor = foreground;
+                    }
+                } while (book.NumberOfCopies == 0);
 
                 //Add the book to the database and save
                 context.Books.Add(book);
