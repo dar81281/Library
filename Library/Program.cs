@@ -337,34 +337,63 @@ namespace Library
                                         where e.CardholderID == cardholderID
                                         select e).ToList();
 
-                    foreach (CheckOutLog col in CheckOutData)
+                    if (CheckOutData.Count > 0)
                     {
-                        DateTime time = DateTime.Now;
-                        //check if user has overdue book (90 days)
-                        if (col.CheckOutDate > time.AddDays(-90))
+                        foreach (CheckOutLog col in CheckOutData)
                         {
-                            //Allow book to be checked out
-
-                            //Stage the changes to the bookToBeCheckedOut CheckOutLog object
-                            CheckOutLog bookToBeCheckedOut = new CheckOutLog
+                            DateTime time = DateTime.Now;
+                            //check if user has overdue book (90 days)
+                            if (col.CheckOutDate > time.AddDays(-90))
                             {
-                                BookID = bookData[0].BookID,
-                                CardholderID = cardholderID,
-                                CheckOutDate = DateTime.Now
-                            };
+                                //Allow book to be checked out
 
-                            //Add the record to the database and save
-                            context.CheckOutLogs.Add(bookToBeCheckedOut);
-                            context.SaveChanges();
+                                //Stage the changes to the bookToBeCheckedOut CheckOutLog object
+                                CheckOutLog bookToBeCheckedOut = new CheckOutLog
+                                {
+                                    BookID = bookData[0].BookID,
+                                    CardholderID = cardholderID,
+                                    CheckOutDate = DateTime.Now
+                                };
+
+                                //Add the record to the database and save
+                                context.CheckOutLogs.Add(bookToBeCheckedOut);
+                                context.SaveChanges();
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Successfully checked out book.");
+                                Console.WriteLine("\nPress enter to continue.");
+                                Console.ReadLine();
+                                Console.Clear();
+                                break;
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"{cardHolderData[0].Person.FirstName} {cardHolderData[0].Person.LastName} has an overdue book and is not allowed to checkout books at this time.\n");
+                                Console.WriteLine("\nPress enter to continue.");
+                                Console.ReadLine();
+                                Console.Clear();
+                            }
                         }
-                        else
+                    }
+                    else
+                    {
+                        //user has no checked out books and is allowed to checkout the book
+                        //Stage the changes to the bookToBeCheckedOut CheckOutLog object
+                        CheckOutLog bookToBeCheckedOut = new CheckOutLog
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"{cardHolderData[0].Person.FirstName} {cardHolderData[0].Person.LastName} has an overdue book and is not allowed to checkout books at this time.\n");
-                            Console.WriteLine("\nPress enter to continue.");
-                            Console.ReadLine();
-                            Console.Clear();
-                        }
+                            BookID = bookData[0].BookID,
+                            CardholderID = cardholderID,
+                            CheckOutDate = DateTime.Now
+                        };
+
+                        //Add the record to the database and save
+                        context.CheckOutLogs.Add(bookToBeCheckedOut);
+                        context.SaveChanges();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Successfully checked out book.");
+                        Console.WriteLine("\nPress enter to continue.");
+                        Console.ReadLine();
+                        Console.Clear();
                     }
                 }
                 else
@@ -645,6 +674,21 @@ namespace Library
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Invalid entry, please only use numbers.");
                             Console.ForegroundColor = foreground;
+                        }
+                        else
+                        {
+                            BookBC bookBC = new BookBC();
+                            int numberOfBooksInStock = bookBC.CountInStockBooks(b);
+                            int numberOfBooksCheckedOut = b.NumberOfCopies - numberOfBooksInStock;
+                            if(numberOfBooksCheckedOut > intTempNumberOfCopies)
+                            {
+                                ConsoleColor foreground = Console.ForegroundColor;
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Invalid entry, there are currently {numberOfBooksCheckedOut} of those books checked out.  Please enter a greater number.");
+                                Console.ForegroundColor = foreground;
+                                //set to 0 to stay in the loop
+                                intTempNumberOfCopies = 0;
+                            }
                         }
                     }
                     else
