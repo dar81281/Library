@@ -342,8 +342,8 @@ namespace Library
                         foreach (CheckOutLog col in CheckOutData)
                         {
                             DateTime time = DateTime.Now;
-                            //check if user has overdue book (90 days)
-                            if (col.CheckOutDate > time.AddDays(-90))
+                            //check if user has overdue book (30 days)
+                            if (col.CheckOutDate > time.AddDays(-30))
                             {
                                 //Allow book to be checked out
 
@@ -948,7 +948,90 @@ namespace Library
         }
         private static void DisplayLists(LibraryInformationEntities context)
         {
-            throw new NotImplementedException();
+            var libarianData = (from e in context.Librarians
+                                orderby e.Person.LastName, e.Person.FirstName
+                                select e).ToList();
+
+            var cardholderData = (from e in context.Cardholders
+                                  orderby e.Person.LastName, e.Person.FirstName
+                                  select e).ToList();
+
+            var authorData = (from e in context.Authors
+                              orderby e.Person.LastName, e.Person.FirstName
+                              select e).ToList();
+
+            var bookData = (from e in context.Books
+                            orderby e.Title
+                            select e).ToList();
+
+            var checkOutData = (from e in context.CheckOutLogs
+                                orderby e.CheckOutDate, e.Book.Title
+                                select e).ToList();
+
+            List<Librarian> librarians = new List<Librarian>();
+            List<Cardholder> cardholders = new List<Cardholder>();
+            List<CheckOutLog> logs = new List<CheckOutLog>();
+            List<Author> authors = new List<Author>();
+            List<Book> books = new List<Book>();
+            List<CheckOutLog> overdueBooks = new List<CheckOutLog>();
+
+            foreach (Librarian lib in libarianData)
+            {
+                librarians.Add(lib);
+            }
+            foreach (Cardholder ch in cardholderData)
+            {
+                cardholders.Add(ch);
+            }
+            foreach (CheckOutLog log in checkOutData)
+            {
+                logs.Add(log);
+            }
+            foreach (Author a in authorData)
+            {
+                authors.Add(a);
+            }
+            foreach (Book book in bookData)
+            {
+                books.Add(book);
+            }
+            foreach (CheckOutLog col in checkOutData)
+            {
+                DateTime time = DateTime.Now;
+                //check if user has overdue book (30 days)
+                if (col.CheckOutDate < time.AddDays(-30))
+                {
+                    overdueBooks.Add(col);
+                }
+            }
+
+            LibrarianBC librarian = new LibrarianBC();
+            CardholderBC cardholder = new CardholderBC();
+            AuthorBC author = new AuthorBC();
+            //BookBC overdue = new BookBC();
+            CheckOutLogBC overdue = new CheckOutLogBC();
+
+            ConsoleColor foreground = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\nDisplaying Librarians:");
+            librarian.Display(librarians);
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("\nDisplaying Cardholders:");
+            cardholder.Display(cardholders, logs);
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nDisplaying Authors:");
+            author.Display(authors, books);
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("\nDisplaying Overdue Books:");
+            overdue.Display(overdueBooks);
+
+            Console.ForegroundColor = foreground;
+            Console.Write("\nPress enter to continue:");
+            Console.ReadLine();
+            Console.Clear();
         }
         private static Author CreateAuthor(LibraryInformationEntities context, string authorFirstName, string authorLastName)
         {
