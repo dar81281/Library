@@ -414,7 +414,7 @@ namespace Library
                 Console.Clear();
             }
         }
-        private static CheckInOutHelper CheckInOutHelper(string checkInOut)
+        public static CheckInOutHelper CheckInOutHelper(string checkInOut)
         {
             Console.Write("Enter the card holder's ID: ");
             string cardId = Console.ReadLine();

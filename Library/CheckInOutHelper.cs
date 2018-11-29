@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library
 {
-    class CheckInOutHelper 
+    public class CheckInOutHelper 
     {
         public string CardID { get; set; }
         public string Isbn { get; set; }
