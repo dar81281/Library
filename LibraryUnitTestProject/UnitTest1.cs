@@ -16,6 +16,7 @@ namespace LibraryUnitTestProject
             var cioh = new CheckInOutHelper(card, isbn);
 
             Assert.IsInstanceOfType(cioh, typeof(CheckInOutHelper));
+
         }
     }
 }

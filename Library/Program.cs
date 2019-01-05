@@ -173,9 +173,23 @@ namespace Library
                         var data = (from e in context.Books
                                     where e.BookID == selection
                                     select e).ToList();
-                        Book book = data[0];
-                        BookBC bookBc = new BookBC();
-                        bookBc.DetailedDisplay(book);
+                        if (data.Count > 0)
+                        {
+                            Book book = data[0];
+                            BookBC bookBc = new BookBC();
+                            bookBc.DetailedDisplay(book);
+                        }
+                        else
+                        {
+                            ConsoleColor foreground = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Book is not found in the database, please try again.");
+                            Console.ForegroundColor = foreground;
+                            //Console.WriteLine("\nPress enter to continue.");
+                            //Console.ReadLine();
+                            //Console.Clear();
+                            selection = -1;
+                        }
                         Console.WriteLine("\nPress enter to continue.");
                         Console.ReadLine();
                     }
